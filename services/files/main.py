@@ -3,6 +3,8 @@ import os
 import uuid
 from pathlib import Path
 
+import cv2
+import numpy as np
 import requests
 from authx import AuthX, AuthXConfig
 from fastapi import FastAPI, File, HTTPException, Query, Request, UploadFile
@@ -20,6 +22,8 @@ app = FastAPI()
 class Msg(BaseModel):
     type: str
 
+
+VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"]
 
 FILES_DIR = Path(
     "/home/lostuser/Projects/WebHack12_25/CO_Hack_25/services/files/uploaded_files"
@@ -66,35 +70,19 @@ async def upload_file(uploaded_file: UploadFile):
             f.write(original_bytes)
 
     elif ext == ".txt":
-        # file_path = os.path.join(FILES_DIR, new_name)
+        with open(file_path, "wb") as f:
+            f.write(original_bytes)
 
+    elif ext in VIDEO_EXTENSIONS:
+        prev_name = f"{new_id}_prev.webp"
+        preview_path = FILES_DIR / prev_name
+
+        frame_bytes = await extract_video_frame_bytes(original_bytes)
+        preview_path.write_bytes(frame_bytes)
         with open(file_path, "wb") as f:
             f.write(original_bytes)
 
     return {"id": new_id}
-
-
-async def compress_to_webp(content: bytes):
-    img = Image.open(io.BytesIO(content))
-
-    # Для PNG/WebP/GIF — привести к RGB
-    if img.mode not in ["RGB", "RGBA"]:
-        img = img.convert("RGB")
-
-    max_width = 1024
-    if img.width > max_width:
-        ratio = max_width / img.width
-        new_size = (max_width, int(img.height * ratio))
-        img = img.resize(new_size, Image.Resampling.LANCZOS)
-
-    buf = io.BytesIO()
-    img.save(
-        buf,
-        format="WEBP",
-        quality=70,  # 0–100, разумное качество
-        method=6,  # уровень сжатия (0–6)
-    )
-    return buf.getvalue()
 
 
 async def compress_to_webp_target_size(
@@ -147,12 +135,12 @@ async def download_file(
         )
 
     if mode == "text":
-        preview_path = FILES_DIR / f"{file_id}.txt"
-        if not preview_path.exists():
+        text_path = FILES_DIR / f"{file_id}.txt"
+        if not text_path.exists():
             raise HTTPException(404, "Text file not found")
 
         return FileResponse(
-            preview_path,
+            text_path,
             filename=f"{file_id}.txt",
             media_type="text/txt",
         )
@@ -167,5 +155,41 @@ async def download_file(
     raise HTTPException(404, "File not found")
 
 
-# @app.get("/download/{file_id}", summary="download image", tags=["FILES"])
-# async def download_
+@app.get("/stream/{file_id}", summary="stream video", tags=["FILES"])
+async def streaming_file(file_id: str):
+    file_path = FILES_DIR / f"{file_id}.mp4"
+    if not file_path.exists():
+        raise HTTPException(404, "Video not found")
+
+    return StreamingResponse(iterfile(str(file_path)), media_type="video/mp4")
+
+
+async def extract_video_frame_bytes(video_bytes: bytes) -> bytes:
+    # пишем во временный файл
+    tmp_path = "/tmp/video_upload.mp4"
+    with open(tmp_path, "wb") as f:
+        f.write(video_bytes)
+
+    cap = cv2.VideoCapture(tmp_path)
+
+    success, frame = cap.read()
+    cap.release()
+
+    if not success:
+        raise ValueError("Cannot extract frame")
+
+    # конвертируем кадр в JPEG
+    _, jpg_bytes = cv2.imencode(".jpg", frame)
+
+    # превращаем JPEG в webp-превью
+    compressed_prev = await compress_to_webp_target_size(
+        jpg_bytes.tobytes(), target_kb=0
+    )
+
+    return compressed_prev
+
+
+def iterfile(file_id: str):
+    with open(file_id, "rb") as f:
+        while chunk := f.read(1024 * 1024):
+            yield chunk
