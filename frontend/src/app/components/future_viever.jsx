@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+import Modal from "./ui/modal";
 
-export default function PlanetViewer({
+export default function FutureViewer({
   zoom = 1,
   speed_koef = 1,
   src = "/matematika.jpg",
@@ -14,14 +15,16 @@ export default function PlanetViewer({
   clockwise = true,
   explored = false,
   is_player = false, // ← важно
+  onOpen,
+  ui_text = String,
 }) {
   const spinDirection = clockwise ? "normal" : "reverse";
   const orbitDirection = clockwise ? "normal" : "reverse";
+  const [open, setOpen] = useState(false);
 
   // масштабируем размер
   const scaledSize = size * zoom;
 
-  // ⬆️ УВЕЛИЧИВАЕМ только высоту контейнера для игрока
   const heightMultiplier = is_player ? 1.4 : 1;
 
   const finalWidth = scaledSize; // ширина без изменений
@@ -31,7 +34,10 @@ export default function PlanetViewer({
   const scaledRadius = radius * zoom;
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+    <div
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+      onClick={() => onOpen(ui_text)}
+    >
       <div
         className="absolute"
         style={{
@@ -45,6 +51,10 @@ export default function PlanetViewer({
       >
         {/* Контейнер, который движется по орбите */}
         <div
+          onClick={() => {
+            console.log("Planet clicked");
+            onOpen();
+          }}
           style={{
             position: "absolute",
             top: -finalHeight / 2,
@@ -55,6 +65,7 @@ export default function PlanetViewer({
             animationDirection: spinDirection,
             transformOrigin: "center center",
             willChange: "transform",
+            // border: "2px solid red",
           }}
         >
           <Image
