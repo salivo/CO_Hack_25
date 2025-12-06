@@ -1,17 +1,43 @@
 "use client";
 import HeaderComponent from "../components/header";
 import Planetspace from "../components/planetspace";
-import Planetspace2 from "../components/planetspace2";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+function Logined() {
+  return <h1>logged in</h1>;
+}
+
+function HeroPage({ onLogin, onRegister }) {
+  return (
+    <div className="flex flex-col h-full">
+      <HeaderComponent>
+        <div className="flex items-center">
+          <button className="login-submit-button w-auto">About Us</button>
+        </div>
+
+        <div className="flex space-x-10">
+          <button className="login-submit-button w-auto" onClick={onLogin}>
+            Login
+          </button>
+          <button className="login-submit-button w-auto" onClick={onRegister}>
+            Register
+          </button>
+        </div>
+      </HeaderComponent>
+    </div>
+  );
+}
+
 export default function Home() {
-  const [status, setStatus] = useState("loading");
+  const [status, setStatus] = useState("loading"); // loading | ok | fail
   const [user, setUser] = useState(null);
   const router = useRouter();
+
   const handleLogin = () => router.push("/login");
   const handleRegister = () => router.push("/register");
   const handleAbout = () => router.push("/about");
+
   useEffect(() => {
     let cancelled = false;
 
@@ -42,45 +68,10 @@ export default function Home() {
     };
   }, []);
 
-  useEffect(() => {
-    if (status === "ok") {
-      router.replace("/home");
-    }
-  }, [status, router]);
-
   if (status === "loading") return <p>Verifying…</p>;
 
-  if (status === "fail") {
-    return (
-      <div className="flex flex-col h-full">
-        <HeaderComponent>
-          <div className="flex items-center">
-            <button
-              className="login-submit-button w-auto"
-              onClick={handleAbout}
-            >
-              About Us
-            </button>
-          </div>
+  if (status === "ok") return <Logined user={user} />;
 
-          <div className="flex space-x-10">
-            <button
-              className="login-submit-button w-auto"
-              onClick={handleLogin}
-            >
-              Login
-            </button>
-            <button
-              className="login-submit-button w-auto"
-              onClick={handleRegister}
-            >
-              Register
-            </button>
-          </div>
-        </HeaderComponent>
-
-        <Planetspace />
-      </div>
-    );
-  }
+  if (status === "fail")
+    return <HeroPage onLogin={handleLogin} onRegister={handleRegister} />;
 }
