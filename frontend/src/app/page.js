@@ -3,9 +3,14 @@ import HeaderComponent from "../components/header";
 import Planetspace from "../components/planetspace";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Statistic from "../components/statbar";
 
 function Logined() {
-  return <h1>logged in</h1>;
+  return (
+    <div className="absolute top-10 left-10 z-10">
+      <Statistic />
+    </div>
+  );
 }
 
 function HeroPage({ onLogin, onRegister }) {
