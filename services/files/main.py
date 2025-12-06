@@ -25,20 +25,7 @@ class Msg(BaseModel):
 
 VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"]
 
-FILES_DIR = Path(
-    "/home/lostuser/Projects/WebHack12_25/CO_Hack_25/services/files/uploaded_files"
-)
-# os.makedirs(FILE_DIR, exist_ok=True)
-
-
-# @app.post("/multiupload", summary="multiupload files", tags=["FILES"])
-# async def multiupload_files(uploaded_files: list[UploadFile]):
-#     for uploaded_file in uploaded_files:
-#         file = uploaded_file.file
-#         filename = uploaded_file.filename
-#         new_id = str(uuid.uuid4())
-#         with open(new_id, "wb") as f:
-#             f.write(file.read())
+FILES_DIR = Path("./uploaded_files")
 
 
 @app.post("/upload", summary="upload file", tags=["FILES"])
