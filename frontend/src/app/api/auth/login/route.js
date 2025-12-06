@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   const body = await req.json();
 
-  const rustRes = await fetch("http://127.0.0.1:5432/login", {
+  const rustRes = await fetch(process.env.AUTH_HOST + "/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

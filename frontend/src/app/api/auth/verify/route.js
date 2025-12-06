@@ -12,7 +12,7 @@ export async function POST() {
     );
   }
 
-  const rustRes = await fetch("http://127.0.0.1:5432/verify", {
+  const rustRes = await fetch(process.env.AUTH_HOST + "/verify", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
