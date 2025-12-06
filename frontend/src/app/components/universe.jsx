@@ -5,15 +5,21 @@ import FutureViewer from "./future_viever";
 
 // твои планеты
 const planets = [
-  { size: 100, radius: 440, speed_koef: 1, src: "/matematika.jpg" },
-  { size: 100, radius: 200, speed_koef: 3, src: "/matematika.jpg" },
-  { size: 100, radius: 600, speed_koef: 2, src: "/matematika.jpg" },
-  { size: 150, radius: 0, speed_koef: 2, src: "/mechanika.jpg" },
+  { size: 200, radius: 440, speed_koef: 9, src: "/matematika.jpg" },
+  { size: 200, radius: 200, speed_koef: 7.5, src: "/matematika.jpg" },
+  { size: 200, radius: 600, speed_koef: 6.3, src: "/matematika.jpg" },
+  {
+    size: 150,
+    radius: 0,
+    speed_koef: 2,
+    src: "/mechanika.jpg",
+    is_player: true,
+  },
 ];
 
-const player = "/elektrotechnika.jpg";
-const explored_star = "/matematika.jpg";
-const unexplored_star = "/mechanika.jpg";
+const player = "/astronaut.jpg";
+const explored_star = "/explored_star.jpg";
+const unexplored_star = "/unexplored_star2.jpg";
 
 const ringRadius = 400;
 

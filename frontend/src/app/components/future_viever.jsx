@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React from "react";
 
-export default function FutureViewer({
+export default function PlanetViewer({
   zoom = 1,
   speed_koef = 1,
   src = "/matematika.jpg",
@@ -12,37 +12,45 @@ export default function FutureViewer({
   spinDuration = 12,
   orbitDuration = 6,
   clockwise = true,
+  explored = false,
+  is_player = false, // ← важно
 }) {
   const spinDirection = clockwise ? "normal" : "reverse";
   const orbitDirection = clockwise ? "normal" : "reverse";
 
-  // масштабируем параметры планеты
+  // масштабируем размер
   const scaledSize = size * zoom;
+
+  // ⬆️ УВЕЛИЧИВАЕМ только высоту контейнера для игрока
+  const heightMultiplier = is_player ? 1.4 : 1;
+
+  const finalWidth = scaledSize; // ширина без изменений
+  const finalHeight = scaledSize * heightMultiplier; // увеличенная высота
+
+  // масштабируем орбиту
   const scaledRadius = radius * zoom;
 
   return (
     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
-      {/* Контейнер-ось орбиты (0x0) — он вращает вложенный элемент */}
       <div
         className="absolute"
         style={{
           width: 0,
           height: 0,
-          // задаём анимацию орбиты на этот контейнер
           animation: `orbit ${orbitDuration * speed_koef}s linear infinite`,
           animationDirection: orbitDirection,
-          transformOrigin: "center center", // важно — вращение вокруг центра контейнера
+          transformOrigin: "center center",
           willChange: "transform",
         }}
       >
-        {/* Сам элемент, смещённый вправо — при вращении будет ходить по кругу */}
+        {/* Контейнер, который движется по орбите */}
         <div
           style={{
             position: "absolute",
-            top: -scaledSize / 2,
-            left: scaledRadius - scaledSize / 2,
-            width: scaledSize,
-            height: scaledSize,
+            top: -finalHeight / 2,
+            left: scaledRadius - finalWidth / 2,
+            width: finalWidth,
+            height: finalHeight,
             animation: `spin ${spinDuration * speed_koef}s linear infinite`,
             animationDirection: spinDirection,
             transformOrigin: "center center",
@@ -54,19 +62,17 @@ export default function FutureViewer({
             alt="planet"
             fill
             draggable={false}
-            sizes={`${Math.round(scaledSize)}px`}
+            sizes={`${Math.round(finalWidth)}px`}
             style={{ objectFit: "cover" }}
           />
         </div>
       </div>
 
-      {/* keyframes — обязательно включаем тут */}
       <style>{`
         @keyframes orbit {
           from { transform: rotate(0deg); }
           to   { transform: rotate(360deg); }
         }
-
         @keyframes spin {
           from { transform: rotate(360deg); }
           to   { transform: rotate(-360deg); }
