@@ -25,9 +25,7 @@ class Msg(BaseModel):
 
 VIDEO_EXTENSIONS = [".mp4", ".mov", ".avi", ".mkv", ".webm"]
 
-FILES_DIR = Path(
-    "/home/lostuser/Projects/WebHack12_25/CO_Hack_25/services/files/uploaded_files"
-)
+FILES_DIR = Path("./uploaded_files")
 # os.makedirs(FILE_DIR, exist_ok=True)
 
 
