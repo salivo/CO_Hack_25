@@ -177,7 +177,10 @@ def get_user_by_id(user_id: str):
 
 
 @app.patch(
-    "/users/{user_id}", response_model=UserSchema, summary="Update user", tags=["USERS"]
+    "/users/{user_id}",
+    response_model=UserSchema,
+    summary="update user by id",
+    tags=["USERS"],
 )
 def update_user(user_id: str, data: UserUpdate):
     # validate UUID
@@ -199,6 +202,34 @@ def update_user(user_id: str, data: UserUpdate):
         session.commit()
 
         return UserSchema.model_validate(user)
+
+
+@app.delete("/users/{user_id}", summary="delete user by id", tags=["USERS"])
+def delete_task(user_id: str):
+    # Проверка UUID
+    try:
+        UUID(user_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
+
+    init_course_db()
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    cur.execute("SELECT id FROM tasks WHERE id = ?", (user_id,))
+    row = cur.fetchone()
+
+    if row is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Удаляем
+    cur.execute("DELETE FROM tasks WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+
+    return {"status": "deleted", "task_id": user_id}
 
 
 init_course_db()
