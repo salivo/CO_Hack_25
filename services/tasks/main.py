@@ -45,6 +45,14 @@ class TaskCreate(BaseModel):
     image: str | None
 
 
+class TaskUpdate(BaseModel):
+    title: str | None = None
+    data: str | None = None
+    text: str | None = None
+    video: str | None = None
+    image: str | None = None
+
+
 class TaskSchema(TaskCreate):
     id: str
 
@@ -69,7 +77,7 @@ def create_course(new_course: CourseSchema):
 
 
 @app.post(
-    "/courses/{course_name}",
+    "/courses/{course_name}/tasks",
     response_model=TaskSchema,
     summary="make task",
     tags=["TASKS"],
@@ -108,7 +116,7 @@ def init_course_db(course_name: str):
 
 
 @app.get(
-    "/courses/{course_name}/tasks", summary="get tasks from course", tags=["TASKS"]
+    "/courses/{course_name}/tasks", summary="get all tasks from course", tags=["TASKS"]
 )
 def get_tasks(course_name: str):
     init_course_db(course_name)  # гарантия, что таблица есть
@@ -154,3 +162,82 @@ def get_task_by_id(course_name: str, task_id: str):
         raise HTTPException(status_code=404, detail="Task not found")
 
     return TaskSchema(**dict(row))
+
+
+@app.patch(
+    "/courses/{course_name}/tasks/{task_id}",
+    response_model=TaskSchema,
+    summary="update task by id",
+    tags=["TASKS"],
+)
+def update_task(course_name: str, task_id: str, updates: TaskUpdate):
+    # Проверка UUID
+    try:
+        UUID(task_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
+
+    init_course_db(course_name)
+
+    conn = get_db(course_name)
+    cur = conn.cursor()
+
+    # Проверяем существование
+    cur.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
+    row = cur.fetchone()
+
+    if row is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    update_data = updates.dict(exclude_unset=True)
+
+    if not update_data:
+        conn.close()
+        return TaskSchema(**dict(row))
+
+    fields = ", ".join([f"{key} = ?" for key in update_data.keys()])
+    values = list(update_data.values()) + [task_id]
+
+    cur.execute(f"UPDATE tasks SET {fields} WHERE id = ?", values)
+    conn.commit()
+
+    # Возвращаем обновлённую запись
+    cur.execute("SELECT * FROM tasks WHERE id = ?", (task_id,))
+    updated_row = cur.fetchone()
+    conn.close()
+
+    return TaskSchema(**dict(updated_row))
+
+
+@app.delete(
+    "/courses/{course_name}/tasks/{task_id}",
+    summary="delete task by id",
+    tags=["TASKS"],
+)
+def delete_task(course_name: str, task_id: str):
+    # Проверка UUID
+    try:
+        UUID(task_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid UUID format")
+
+    init_course_db(course_name)
+
+    conn = get_db(course_name)
+    cur = conn.cursor()
+
+    # Проверяем, есть ли задача
+    cur.execute("SELECT id FROM tasks WHERE id = ?", (task_id,))
+    row = cur.fetchone()
+
+    if row is None:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    # Удаляем
+    cur.execute("DELETE FROM tasks WHERE id = ?", (task_id,))
+    conn.commit()
+    conn.close()
+
+    return {"status": "deleted", "task_id": task_id}
