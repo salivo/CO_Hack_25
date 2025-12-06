@@ -8,7 +8,7 @@ export async function POST() {
   if (!token) {
     return NextResponse.json(
       { ok: false, error: "No token cookie" },
-      { status: 401 },
+      { status: 200 },
     );
   }
 
@@ -25,7 +25,7 @@ export async function POST() {
     const text = await rustRes.text().catch(() => "");
     return NextResponse.json(
       { ok: false, error: text || "Invalid token" },
-      { status: 401 },
+      { status: 200 },
     );
   }
 

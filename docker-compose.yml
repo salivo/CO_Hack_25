@@ -30,12 +30,12 @@ services:
       - "5000:5000"
     restart: unless-stopped
 
-  frontend_service:
-    build:
-      context: ./frontend
-    container_name: frontend_service
-    ports:
-      - "80:3000"
-    environment:
-      - AUTH_HOST=http://bruth_service:5000
-    restart: unless-stopped
+  # frontend_service:
+  #   build:
+  #     context: ./frontend
+  #   container_name: frontend_service
+  #   ports:
+  #     - "80:3000"
+  #   environment:
+  #     - AUTH_HOST=http://bruth_service:5000
+  #   restart: unless-stopped
