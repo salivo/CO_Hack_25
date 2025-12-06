@@ -11,6 +11,12 @@ const planets = [
   { size: 150, radius: 0, speed_koef: 2, src: "/mechanika.jpg" },
 ];
 
+const player = "/elektrotechnika.jpg";
+const explored_star = "/matematika.jpg";
+const unexplored_star = "/mechanika.jpg";
+
+const ringRadius = 400;
+
 export default function Universe() {
   const [zoom, setZoom] = useState(1);
 
@@ -27,16 +33,33 @@ export default function Universe() {
       className="relative min-h-screen w-full bg-black overflow-hidden"
       onWheel={handleWheel}
     >
-      <Ring radius={440} thickness={3} color="cyan" opacity={4} zoom={zoom} />
+      <Ring
+        radius={ringRadius}
+        thickness={3}
+        color="cyan"
+        opacity={4}
+        zoom={zoom}
+      />
       {planets.map((p, index) => (
-        <FutureViewer key={index} zoom={zoom} {...p} />
+        <FutureViewer
+          key={index}
+          zoom={zoom}
+          {...p}
+          src={
+            p.radius <= ringRadius
+              ? p.radius == 0
+                ? player
+                : explored_star
+              : unexplored_star
+          }
+        />
       ))}
     </div>
   );
 }
 
 function Ring({
-  radius = 200,
+  radius = ringRadius,
   thickness = 2,
   color = "white",
   opacity = 0.2,
