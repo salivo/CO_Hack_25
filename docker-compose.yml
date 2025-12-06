@@ -13,14 +13,14 @@ services:
       context: ./services/tasks
     container_name: tasks_service
     ports:
-      - "7000:8000"
+      - "8001:8000"
     restart: unless-stopped
   users:
     build:
       context: ./services/users
     container_name: users_service
     ports:
-      - "6000:8000"
+      - "8002:8000"
     restart: unless-stopped
   bruth:
     build:
