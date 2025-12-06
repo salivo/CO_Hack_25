@@ -1,61 +1,86 @@
 "use client";
-import HeaderComponent from "./components/header";
-import Planetspace from "./components/planetspace";
+import HeaderComponent from "../components/header";
+import Planetspace from "../components/planetspace";
+import Planetspace2 from "../components/planetspace2";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const [status, setStatus] = useState("loading"); // loading|ok|fail
+  const [status, setStatus] = useState("loading");
   const [user, setUser] = useState(null);
+  const router = useRouter();
+  const handleLogin = () => router.push("/login");
+  const handleRegister = () => router.push("/register");
+  const handleAbout = () => router.push("/about");
+  useEffect(() => {
+    let cancelled = false;
 
-  // useEffect(() => {
-  //   let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        });
 
-  //   (async () => {
-  //     try {
-  //       const res = await fetch("/api/auth/verify", {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //       });
+        const json = await res.json();
 
-  //       const json = await res.json();
+        if (cancelled) return;
 
-  //       if (cancelled) return;
+        if (res.ok && json.ok) {
+          setUser(json.user);
+          setStatus("ok");
+        } else {
+          setStatus("fail");
+        }
+      } catch {
+        if (!cancelled) setStatus("fail");
+      }
+    })();
 
-  //       if (res.ok && json.ok) {
-  //         setUser(json.user);
-  //         setStatus("ok");
-  //       } else {
-  //         setStatus("fail");
-  //       }
-  //     } catch {
-  //       if (!cancelled) setStatus("fail");
-  //     }
-  //   })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
-  //   return () => {
-  //     cancelled = true;
-  //   };
-  // }, []);
+  useEffect(() => {
+    if (status === "ok") {
+      router.replace("/planetspace2");
+    }
+  }, [status, router]);
 
-  // if (status === "loading") return <p>Verifying…</p>;
-  // if (status === "fail") return <p>Not logged in</p>;
+  if (status === "loading") return <p>Verifying…</p>;
 
-  return (
-    <div className="flex flex-col h-full">
-      <HeaderComponent>
-        <div className="flex items-center">
-          <button className="login-submit-button w-auto">About Us</button>
-        </div>
+  if (status === "fail") {
+    return (
+      <div className="flex flex-col h-full">
+        <HeaderComponent>
+          <div className="flex items-center">
+            <button
+              className="login-submit-button w-auto"
+              onClick={handleAbout}
+            >
+              About Us
+            </button>
+          </div>
 
-        <div className="flex space-x-10">
-          <button className="login-submit-button w-auto">Login</button>
+          <div className="flex space-x-10">
+            <button
+              className="login-submit-button w-auto"
+              onClick={handleLogin}
+            >
+              Login
+            </button>
+            <button
+              className="login-submit-button w-auto"
+              onClick={handleRegister}
+            >
+              Register
+            </button>
+          </div>
+        </HeaderComponent>
 
-          <button className="login-submit-button w-auto">Register</button>
-        </div>
-      </HeaderComponent>
-
-      <Planetspace />
-      {/* <Planetspace2 />*/}
-    </div>
-  );
+        <Planetspace />
+      </div>
+    );
+  }
 }

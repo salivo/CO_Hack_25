@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 
-export const runtime = "nodejs"; // ✅ force Node, so localhost fetch works
-
+export const runtime = "nodejs";
 export async function POST(req) {
   try {
     const body = await req.json();
@@ -39,7 +38,7 @@ export async function POST(req) {
 
     return nextRes;
   } catch (err) {
-    console.error("REGISTER ROUTE ERROR:", err); // ✅ log real cause
+    console.error("REGISTER ROUTE ERROR:", err);
     return NextResponse.json(
       { ok: false, message: "Bad request", error: String(err) },
       { status: 400 },
