@@ -1,6 +1,8 @@
 "use client";
 import HeaderComponent from "@/components/header";
 import Planetspace2 from "@/components/planetspace2";
+import Hamburger from "@/components/hamburger";
+import Mainlayout from "@/components/mainlayout";
 // import { useEffect, useState } from "react";
 // import { useRouter } from "next/router";
 
@@ -12,7 +14,7 @@ export default function Home() {
     <div className="flex flex-col h-full">
       <HeaderComponent>
         <div className="flex items-center">
-          <button className="login-submit-button w-auto">About Us</button>
+          <Hamburger />
         </div>
 
         {/* <div className="flex space-x-10">
@@ -21,8 +23,7 @@ export default function Home() {
             <button className="login-submit-button w-auto">Register</button>
           </div>*/}
       </HeaderComponent>
-
-      <Planetspace2 />
+      <Mainlayout />
     </div>
   );
 }

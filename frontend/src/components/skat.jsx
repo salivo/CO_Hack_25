@@ -2,14 +2,14 @@
 
 import React from "react";
 
-export default function Character() {
+export default function Skat() {
   return (
     <div
       className="relative"
       style={{
-        width: "230px",
-        height: "330px",
-        backgroundImage: "url('/character.png')",
+        width: "350px",
+        height: "450px",
+        backgroundImage: "url('/skat.png')",
         backgroundSize: "contain",
         backgroundRepeat: "no-repeat",
         backgroundPosition: "center",
