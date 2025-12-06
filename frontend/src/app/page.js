@@ -44,7 +44,7 @@ export default function Home() {
 
   useEffect(() => {
     if (status === "ok") {
-      router.replace("/planetspace2");
+      router.replace("/home");
     }
   }, [status, router]);
 
