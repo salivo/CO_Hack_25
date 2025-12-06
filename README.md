@@ -3,7 +3,7 @@ Init submodules
 ```
 git submodule update --init --recursive
 ```
-Install dependencies
+run all
 ```
-pnpm install
+sudo docker-compose up --build
 ```

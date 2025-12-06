@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+pillow
+requests
+sqlalchemy[asyncio]
+authx
+python-multipart
+starlette
