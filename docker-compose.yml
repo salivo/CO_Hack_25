@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  files:
+    build:
+      context: ./services/files
+    container_name: files_service
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+  tasks:
+    build:
+      context: ./services/tasks
+    container_name: tasks_service
+    ports:
+      - "7000:8000"
+    restart: unless-stopped
+  users:
+    build:
+      context: ./services/users
+    container_name: users_service
+    ports:
+      - "6000:8000"
+    restart: unless-stopped
+  bruth:
+    build:
+      context: ./services/bruth
+    container_name: bruth_service
+    ports:
+      - "5000:5000"
+    restart: unless-stopped

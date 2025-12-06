@@ -1,0 +1,4 @@
+[submodule "services/bruth"]
+	path = services/bruth
+	url = git@github.com:salivo/bruth.git
+	branch = vip
