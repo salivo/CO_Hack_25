@@ -52,3 +52,20 @@ body {
 .login-submit-button:active {
     transform: translateY(0.125rem);
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(13, 148, 136, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(13, 148, 136, 0.4);
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(13, 148, 136, 0.8);
+}

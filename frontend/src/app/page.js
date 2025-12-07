@@ -6,12 +6,16 @@ import { useRouter } from "next/navigation";
 import Statistic from "../components/statbar";
 import PlanetSpace from "@/components/planetspace3";
 import HamburgerMenu from "@/components/hamburger";
+import MissionLog from "@/components/missionlog";
 
 function Logined() {
   return (
     <>
       <div className="absolute top-5 left-5 z-10">
         <Statistic />
+      </div>
+      <div className="absolute bottom-5 left-5 z-20">
+        <MissionLog />
       </div>
       <PlanetSpace />
     </>
