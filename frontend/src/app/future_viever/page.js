@@ -1,10 +1,11 @@
 "use client";
-import PlanetSpace from "../components/planetspace3";
+
+import Universe from "@/components/universe";
 
 export default function Home() {
   return (
     <div className="flex flex-col h-full">
-      <PlanetSpace />
+      <Universe />
     </div>
   );
 }
