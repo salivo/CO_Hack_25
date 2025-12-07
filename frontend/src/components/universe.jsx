@@ -1,9 +1,14 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import FutureViewer from "./future_viever";
 import Modal from "./ui/modal";
 import StarBackground from "./star_bg";
+import SwitchNowFuture from "./risebutton";
+
+const step = 10;
+const min_ring = 300;
+const max_ring = 600;
 
 const planets = [
   {
@@ -41,13 +46,36 @@ const player = "/astronaut.jpg";
 const explored_star = "/explored_star.jpg";
 const unexplored_star = "/unexplored_star2.jpg";
 
-const ringRadius = 400;
 export default function Universe() {
   const [zoom, setZoom] = useState(1);
 
-  // 🔥 ЭТО — самое важное!
   const [modalOpen, setModalOpen] = useState(false);
   const [modalText, setModalText] = useState("");
+
+  // 🔥 Управляемым делаем radius
+  const [ringRadius, setRingRadius] = useState(400);
+
+  // Какая кнопка активна
+  const [mode, setMode] = useState("now");
+
+  // 🔥 Анимация роста/сжатия кольца
+  useEffect(() => {
+    const id = setInterval(() => {
+      setRingRadius((r) => {
+        if (mode === "now") {
+          // увеличиваем до max_ring
+          if (r < max_ring) return Math.min(r + step, max_ring);
+          return r;
+        } else {
+          // уменьшаем до min_ring
+          if (r > min_ring) return Math.max(r - step, min_ring);
+          return r;
+        }
+      });
+    }, 30); // скорость анимации (мс)
+
+    return () => clearInterval(id);
+  }, [mode]);
 
   const handleWheel = useCallback((e) => {
     e.preventDefault();
@@ -56,12 +84,14 @@ export default function Universe() {
       return Math.min(Math.max(next, 0.3), 1.5);
     });
   }, []);
+
   return (
     <div
       className="relative min-h-screen w-full bg-black overflow-hidden"
       onWheel={handleWheel}
     >
       <StarBackground count={300} />
+
       <Ring
         radius={ringRadius}
         thickness={3}
@@ -69,6 +99,7 @@ export default function Universe() {
         opacity={4}
         zoom={zoom}
       />
+
       {planets.map((p, index) => (
         <FutureViewer
           key={index}
@@ -93,12 +124,21 @@ export default function Universe() {
           {modalText}
         </div>
       </Modal>
+
+      {/* Центрируем переключатель */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2">
+        <SwitchNowFuture
+          onChange={(value) => {
+            setMode(value);
+          }}
+        />
+      </div>
     </div>
   );
 }
 
 function Ring({
-  radius = ringRadius,
+  radius,
   thickness = 2,
   color = "white",
   opacity = 0.2,
@@ -110,7 +150,7 @@ function Ring({
 
   return (
     <div
-      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all"
       style={{
         width: size,
         height: size,
