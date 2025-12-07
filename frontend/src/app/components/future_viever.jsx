@@ -52,7 +52,7 @@ export default function FutureViewer({
         {/* Контейнер, который движется по орбите */}
         <div
           onClick={() => {
-            console.log("Planet clicked");
+            console.log("Star clicked");
             onOpen();
           }}
           style={{
