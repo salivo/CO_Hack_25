@@ -4,12 +4,19 @@ import Planetspace from "../components/planetspace";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Statistic from "../components/statbar";
+import MissionLog from "../components/missionlog";
 
 function Logined() {
   return (
-    <div className="absolute top-10 left-10 z-10">
-      <Statistic />
-    </div>
+    <main className="relative w-full h-screen bg-black overflow-hidden flex items-center justify-center">
+      <div className="absolute top-10 left-10 z-20">
+        <Statistic />
+      </div>
+
+      <div className="absolute bottom-10 left-10 z-20">
+        <MissionLog />
+      </div>
+    </main>
   );
 }
 
