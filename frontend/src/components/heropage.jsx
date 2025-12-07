@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Character from "./character";
 import Skat from "./skat";
 import { useRouter } from "next/navigation";
+import TouchHover from "./touch_hover";
 
 const HEADING_TEXT = "Your journey to knowledge begins here.";
 const SUBHEADING_TEXT = "Master new skills with our interactive platform.";
@@ -107,15 +108,14 @@ export default function AnimatedHero() {
         }`}
       >
         {courses.map((course, idx) => (
-          <div
-            key={idx}
-            className="group relative bg-[#1f3f4f]/60 text-white rounded-xl p-8 shadow-lg border border-[#2f6f6f]/70 cursor-pointer transform transition-all duration-500 hover:-translate-y-4 hover:scale-105"
-          >
-            <h3 className="text-2xl font-bold mb-4">{course.title}</h3>
-            <p className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              {course.description}
-            </p>
-          </div>
+          <TouchHover key={idx}>
+            <div className="group relative bg-[#1f3f4f]/60 text-white rounded-xl p-8 shadow-lg border border-[#2f6f6f]/70 cursor-pointer transform transition-all duration-500 hover:-translate-y-4 hover:scale-105">
+              <h3 className="text-2xl font-bold mb-4">{course.title}</h3>
+              <p className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                {course.description}
+              </p>
+            </div>
+          </TouchHover>
         ))}
       </div>
 

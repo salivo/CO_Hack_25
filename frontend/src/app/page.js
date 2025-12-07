@@ -30,7 +30,7 @@ const handleAbout = () => router.push("/about");
 function HeroPage({ onLogin, onRegister }) {
   const router = useRouter();
   return (
-    <div className="page-scroll">
+    <div className="page-scroll overflow-x-hidden">
       <div className="flex flex-col h-full">
         <HeaderComponent>
           <div className="flex items-center">
