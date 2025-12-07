@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 
 const TEXT_COLOR = "#678666";
 const PROGRESS_COLOR = "#1f3f4f";
@@ -20,14 +20,17 @@ export default function PlanetViewer({
   explored = false,
   text_color = TEXT_COLOR,
   is_player = false,
+  name = "1",
+  ui_text = "None",
+  onOpen,
 }) {
   const spinDirection = clockwise ? "normal" : "reverse";
   const orbitDirection = clockwise ? "normal" : "reverse";
-
+  const [open, setOpen] = useState(false);
   // масштабируем планету и орбиту
   const scaledSize = size * zoom;
   const scaledRadius = radius * zoom;
-
+  const heightMultiplier = is_player ? 1.4 : 1;
   // ====== параметры прогресс кольца ======
   const ringSize = scaledSize * 1.7; // размер кольца вокруг планеты
   const r = ringSize * 0.42; // радиус круга
@@ -37,9 +40,13 @@ export default function PlanetViewer({
   // const text_color = "#678666";
   const PROGRESS_COLOR = "#1f3f4f";
   const GOLD_COLOR = "#D4AF37";
+  const offsetY = scaledSize / 2;
 
   return (
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
+    <div
+      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+      onClick={() => onOpen(ui_text)}
+    >
       {/* Контейнер-ось орбиты */}
       <div
         className="absolute"
@@ -53,6 +60,10 @@ export default function PlanetViewer({
       >
         {/* Контейнер планеты (внутри будет SVG и сама планета) */}
         <div
+          onClick={() => {
+            console.log("Planet clicked");
+            onOpen();
+          }}
           style={{
             position: "absolute",
             top: -ringSize / 2,
@@ -75,6 +86,19 @@ export default function PlanetViewer({
               }}
             >
               {percentage}%
+            </span>
+          )}
+          {!is_player && (
+            <span
+              className="text-2xl font-bold mb-4"
+              style={{
+                color: text_color,
+                textAlign: "center",
+                display: "block",
+                transform: `translateY(${scaledSize * 1.1}px)`,
+              }}
+            >
+              {}
             </span>
           )}
           {/* SVG progress ring */}
@@ -116,7 +140,7 @@ export default function PlanetViewer({
             className="absolute"
             style={{
               width: scaledSize,
-              height: scaledSize,
+              height: scaledSize * heightMultiplier, // ← растягиваем по вертикали
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
@@ -128,7 +152,10 @@ export default function PlanetViewer({
               fill
               draggable={false}
               sizes={`${Math.round(scaledSize)}px`}
-              style={{ objectFit: "cover", borderRadius: "50%" }}
+              style={{
+                objectFit: "cover",
+                borderRadius: is_player ? "15%" : "50%", // planetary round, player tall
+              }}
             />
           </div>
         </div>
