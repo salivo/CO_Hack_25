@@ -69,3 +69,8 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(13, 148, 136, 0.8);
 }
+
+.page-scroll {
+    height: 100vh;
+    overflow-y: auto;
+}

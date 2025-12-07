@@ -7,6 +7,7 @@ import Statistic from "../components/statbar";
 import PlanetSpace from "@/components/planetspace3";
 import HamburgerMenu from "@/components/hamburger";
 import MissionLog from "@/components/missionlog";
+import StarBackground from "@/components/star_bg";
 
 function Logined() {
   return (
@@ -29,22 +30,26 @@ const handleAbout = () => router.push("/about");
 function HeroPage({ onLogin, onRegister }) {
   const router = useRouter();
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <HeaderComponent>
-        <div className="flex items-center">
-          <button className="login-submit-button w-auto">About Us</button>
-        </div>
+    <div className="page-scroll">
+      <div className="flex flex-col h-full">
+        <HeaderComponent>
+          <div className="flex items-center">
+            <button className="login-submit-button w-auto">About Us</button>
+          </div>
 
-        <div className="flex space-x-10">
-          <button className="login-submit-button w-auto" onClick={onLogin}>
-            Login
-          </button>
-          <button className="login-submit-button w-auto" onClick={onRegister}>
-            Register
-          </button>
-        </div>
-      </HeaderComponent>
-      <AnimatedHero />
+          <div className="flex space-x-10">
+            <button className="login-submit-button w-auto" onClick={onLogin}>
+              Login
+            </button>
+            <button className="login-submit-button w-auto" onClick={onRegister}>
+              Register
+            </button>
+          </div>
+        </HeaderComponent>
+        <StarBackground />
+
+        <AnimatedHero />
+      </div>
     </div>
   );
 }
